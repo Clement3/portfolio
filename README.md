@@ -1,6 +1,6 @@
 # Yefi
 
-A starter template with Express, TypeScript, Mangoose and Mustache
+A starter template with Express, TypeScript, Mangoose and Nunjucks
 
 ## Getting Started
 ### Prerequisites
@@ -8,6 +8,7 @@ A starter template with Express, TypeScript, Mangoose and Mustache
 ```
 npm
 node
+mongodb
 ```
 
 ### Installing

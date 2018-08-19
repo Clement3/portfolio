@@ -1,0 +1,10 @@
+{% extends "layouts/admin.html" %}
+
+{% block body %}
+<h1>Mes projects</h1>
+
+{% for project in projects %}
+    {{ project.title }}
+{% endfor %}
+
+{% endblock %}

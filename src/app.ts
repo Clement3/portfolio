@@ -2,48 +2,71 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import mustache from 'mustache';
-import fs from 'fs';
+import nunjucks from 'nunjucks';
 import webRoutes from './routes/web';
 import apiRoutes from './routes/api';
+import adminRoutes from './routes/admin';
+import authMiddleware from './middlewares/auth.middleware';
+import session from 'express-session';
+import mongoStoreFactory from 'connect-mongo';
 
 // Load .env file
 dotenv.config();
 
-class App {
-
+class App 
+{
     public app: express.Application;
-    public mongoUrl: string = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;  
+    private mongoUrl: string = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;  
 
-    constructor() {
+    constructor() 
+    {
         this.app = express();
+        this.sessionSetup();        
         this.config();
         this.mongoSetup();
+        this.viewEngine();
     }
     
-    private config(): void {
+    private config(): void 
+    {
         this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(bodyParser.urlencoded({ extended: true }));
 
         this.app.use('/', webRoutes);
         this.app.use('/api', apiRoutes);
-
-        this.app.engine('mustache', (filePath: string, options: any, callback: Function) => { 
-            fs.readFile(filePath, (err, content) => {
-                if (err) {
-                    return callback;
-                }       
-                const rendered = mustache.to_html(content.toString(), options);
-                return callback(null, rendered);
-            });
-        });
-        this.app.set('view engine', 'mustache');
-        this.app.set('views', __dirname + '/views');
+        this.app.use('/admin', [ authMiddleware, adminRoutes ]);
     }
 
-    private mongoSetup(): void {
+    private mongoSetup(): void 
+    {
         mongoose.Promise = global.Promise;
         mongoose.connect(this.mongoUrl, { useNewUrlParser: true });
+    }
+
+    private viewEngine(): void 
+    {
+        nunjucks.configure(__dirname + '/views', {
+            autoescape: true,
+            express: this.app
+        });
+
+        this.app.set('view engine', 'html');
+
+    }
+
+    private sessionSetup(): void 
+    {
+        let MongoStore = mongoStoreFactory(session);
+
+        this.app.use(session({
+            name : 'app.sid',
+            secret: 'i-love-husky',
+            resave: false,
+            saveUninitialized: false,
+            store: new MongoStore({ 
+                url: this.mongoUrl
+            })
+        }));
     }
 }
 
