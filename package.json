@@ -1,7 +1,7 @@
 {
-  "name": "yefi",
+  "name": "portfolio",
   "version": "1.0.0",
-  "description": "A starter template with Express, TypeScript, Mangoose and Nunjucks",
+  "description": "Portfolio",
   "main": "build/server.js",
   "scripts": {
     "build": "tsc",
