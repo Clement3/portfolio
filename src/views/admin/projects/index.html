@@ -1,10 +1,67 @@
 {% extends "layouts/admin.html" %}
 
-{% block body %}
-<h1>Mes projects</h1>
+{% block title %}Liste des projets{% endblock %}
 
-{% for project in projects %}
-    {{ project.title }}
-{% endfor %}
+{% block body %}
+<section class="hero is-primary">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Liste des projets
+      </h1>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column is-one-quarter">
+        <aside class="menu">
+          <p class="menu-label">
+            Géneral
+          </p>
+          <ul class="menu-list">
+            <li><a>Tableau de bord</a></li>
+          </ul>
+          <p class="menu-label">
+            Projets
+          </p>
+          <ul class="menu-list">
+            <li><a>Liste des projets</a></li>
+            <li><a>Créer un projet</a></li>
+          </ul>
+        </aside>    
+      </div>
+      <div class="column">
+        {% for project in projects %}
+        <div class="card">
+        <div class="card-image">
+            <figure class="image is-3by1">
+              <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+            </figure>
+          </div>          
+          <header class="card-header">
+            <p class="card-header-title">
+              {{ project.title }}
+            </p>
+            <span class="card-header-icon">{{ project.created_date }}</span>
+          </header>
+          <div class="card-content">
+            <div class="content">
+              {{ project.description }}
+            </div>
+          </div>
+          <footer class="card-footer">
+            <a href="#" class="card-footer-item">Voir</a>
+            <a href="#" class="card-footer-item">Éditer</a>
+            <a href="#" class="card-footer-item">Supprimer</a>
+          </footer>
+        </div>
+        {% endfor %}    
+      </div>
+    </div>
+  </div>  
+</section>
 
 {% endblock %}
